@@ -43,17 +43,3 @@ class ViewShopProductSerializer(serializers.Serializer):
             image = model.Media.objects.get(product_id=obj.id)
             return image.product_image.name
         return None
-
-
-class ViewShopSerializer(serializers.Serializer):
-    """Serializer class to view the list of products"""
-    data = serializers.SerializerMethodField()
-
-    def get_data(self, obj):
-        """
-        :param obj:
-        :return: get the category details according to shop_id
-        """
-        category_data = model.Category.objects.filter(shop_id=obj.id)
-        category_ser = ViewCategorySerializer(category_data, many=True)
-        return category_ser.data
