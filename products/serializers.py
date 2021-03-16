@@ -3,38 +3,20 @@ from rest_framework import serializers
 from products import models as model
 
 
-class ViewCategoryNameSerializer(serializers.Serializer):
-    category_name = serializers.CharField()
-
-
 class ViewCategorySerializer(serializers.Serializer):
     """Serializer class to view the list of category"""
     id = serializers.IntegerField()
-    category_name = serializers.SerializerMethodField()
-
-    product = serializers.SerializerMethodField()
-
-    def get_category_name(self, obj):
-        category_name = model.Category.objects.filter(parent_cat=obj.id)
-        if category_name:
-            return obj.category_name
-        return obj.category_name
+    category_name = serializers.CharField()
+    product = serializers.SerializerMethodField(default=None)
 
     def get_product(self, obj):
         """
         :param obj:
         :return: Get the product details according to category id
         """
-        category_name = model.Category.objects.filter(parent_cat=obj.id)
-
-        if category_name:
-            for i in range(len(category_name)):
-                product_data = model.Product.objects.filter(
-                    category_id__category_name__contains=category_name[i])
-                product_ser = ViewShopProductSerializer(product_data, many=True)
-                return product_ser.data
-        products = model.Product.objects.filter(category_id=obj.id)
-        product_ser = ViewShopProductSerializer(products, many=True)
+        product_data = model.Product.objects.filter(
+            category_id__parent_cat=obj.id)
+        product_ser = ViewShopProductSerializer(product_data, many=True)
         return product_ser.data
 
 
