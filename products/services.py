@@ -7,7 +7,8 @@ class ProductManagementService:
     """ service layer """
 
     def get_product_by_shop(self, shop_id):
-        shop_data = Category.objects.filter(shop_id=shop_id)
+        shop_data = Category.objects.filter(shop_id=shop_id, parent_cat=None)
+
         if shop_data:
             shop_ser = ViewCategorySerializer(shop_data, many=True)
             return message.fetch_data_response(data=shop_ser.data)
